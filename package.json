@@ -11,7 +11,8 @@
     "export": "next export",
     "lint": "next lint",
     "lint-fix": "next lint --fix",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
