@@ -67,8 +67,18 @@ export default async function handler(req, res) {
 		if ( req.method === 'GET' ) {
 			const predictions = await prisma.usersOnGroups.findFirst({
 				where: {
-					groupId: req.query.group,
-					userId: req.query.user
+					OR: [
+						{
+							groupId: req.query.group,
+							userId: req.query.user
+						},
+						{
+							userId: req.query.user,
+							User: {
+								role: Role.ADMIN
+							}
+						}
+					]
 				},
 				include: {
 					GroupPrediction: true,

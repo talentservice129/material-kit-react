@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { getSession } from 'next-auth/react';
-import { Autocomplete, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import StepWizard from 'react-step-wizard';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
@@ -61,19 +61,20 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					container
 					spacing={2}
 					sx={{
-						mb: 3
+						mb: 3,
 					}}
+					justifyContent={"center"}
 				>
 					{
 						groups.map((group, index) => (
 							<Grid
 								item
 								sm={6}
-								lg={3}
+								lg={4}
 								key={'group-' + index }
 							>
 								<Card>
-									<Table>
+									<Table size="small">
 										<TableHead>
 											<TableRow>
 												<TableCell
@@ -103,15 +104,22 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 															{
 																team1.name !== team2.name &&												
 																<TextField
-																	type="number"
+																	select
 																	name={ "group[" + team1.id + '][' + team2.id + ']' }
-																	InputLabelProps={{ shrink: true,}}
 																	variant="standard"
-																	inputProps={{ min: 0 }}
 																	value={ formik.values.group && formik.values.group[team1.id] && formik.values.group[team1.id][team2.id] }
 																	onBlur={ formik.handleBlur }
 																	onChange={ formik.handleChange }
-																/>
+																>
+																	{ [0,1,2,3,4,5,6,7,8,9,10].map(score => (
+																		<MenuItem
+																			key={'score-' + score }
+																			value={score}
+																		>
+																			{score}
+																		</MenuItem>
+																	)) }
+																</TextField>
 															}
 														</TableCell>
 													))}
