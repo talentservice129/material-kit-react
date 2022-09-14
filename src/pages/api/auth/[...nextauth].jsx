@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import NextAuth from 'next-auth';
-import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvicer from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import * as Yup from 'yup';
@@ -13,10 +12,6 @@ const prisma = new PrismaClient();
 
 export default NextAuth({
 	providers: [
-		GitHubProvider({
-			clientId: getEnv('GITHUB_ID'),
-			clientSecret: getEnv('GITHUB_SECRET'),
-		}),
 		CredentialsProvicer({
 			name: "Credentials",
 			credentials: {
