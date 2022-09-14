@@ -8,8 +8,8 @@ import StepWizard from 'react-step-wizard';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
 
-import { getPredictions, savePredictions } from '~/api/prediction';
-import { getTeams } from '~/api/team';
+import { getPredictions, savePredictions } from '~/utils/api/prediction';
+import { getTeams } from '~/utils/api/team';
 import { DashboardLayout } from '~/components/dashboard-layout';
 import { COUNTRIES, ROUNDS } from '~/utils/constant';
 

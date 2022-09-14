@@ -18,7 +18,7 @@ import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
 
-import { getGroups } from '~/api/group';
+import { getGroups } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 
 export const DashboardSidebar = (props) => {

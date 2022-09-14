@@ -24,7 +24,7 @@ import { useMutation } from 'react-query';
 import { getSession } from 'next-auth/react';
 
 import { DashboardLayout } from '~/components/dashboard-layout';
-import { addGroup } from '~/api/group';
+import { addGroup } from '~/utils/api/group';
 
 const fees = [0,5,10,20,50,100,500];
 

@@ -16,7 +16,7 @@ import { useMutation } from 'react-query';
 import { useFormik } from 'formik';
 import { signOut } from 'next-auth/react';
 
-import { updateUser } from '~/api/auth';
+import { updateUser } from '~/utils/api/auth';
 import { COUNTRIES } from '~/utils/constant';
 
 export const AccountProfileDetails = ({currentUser, ...props}) => {

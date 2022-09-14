@@ -20,7 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useMutation } from 'react-query';
 
 import { COUNTRIES } from '~/utils/constant';
-import { registerUser } from '~/api/auth';
+import { registerUser } from '~/utils/api/auth';
 
 const Register = () => {
 	const router = useRouter();

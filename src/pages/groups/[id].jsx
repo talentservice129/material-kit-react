@@ -8,7 +8,7 @@ import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, CircularProg
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { loginToGroup, getGroup } from '~/api/group';
+import { loginToGroup, getGroup } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 import { DashboardLayout } from '~/components/dashboard-layout';
 
