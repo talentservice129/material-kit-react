@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  role          Role      @default(USER)
+  name          String?   @unique
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  gender        Gender    @default(MALE)
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  password      String
+  country       String
+
+  UsersOnGroups UsersOnGroups[]
+  Group         Group[]
+  Reward        Reward[]
+
+  @@map("users")
+}
+
+model Team {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  group Int
+
+  GroupPrediction1 GroupPrediction[] @relation("Team1")
+  GroupPrediction2 GroupPrediction[] @relation("Team2")
+  RoundPrediction  RoundPrediction[]
+}
+
+model Group {
+  id          String  @id @default(cuid())
+  title       String  @db.VarChar(255)
+  description String  @db.Text
+  fee         Int
+  password    String?
+  origin      String  @default("")
+  owner       String?
+
+  Owner         User?           @relation(fields: [owner], references: [id])
+  UsersOnGroups UsersOnGroups[]
+  Reward        Reward[]
+}
+
+model UsersOnGroups {
+  id      Int     @id @default(autoincrement())
+  userId  String  @map("user_id")
+  groupId String? @map("group_id")
+
+  User            User              @relation(fields: [userId], references: [id])
+  Group           Group?            @relation(fields: [groupId], references: [id])
+  GroupPrediction GroupPrediction[]
+  RoundPrediction RoundPrediction[]
+}
+
+model GroupPrediction {
+  id          Int     @id @default(autoincrement())
+  team1       Int     @map("team_1")
+  team2       Int     @map("team_2")
+  score1      Int     @map("score_1")
+  score2      Int     @map("score_2")
+  userGroupId Int     @map("user_group_id")
+  result      Boolean @default(false)
+
+  UserGroup UsersOnGroups @relation(fields: [userGroupId], references: [id])
+  Team1     Team          @relation("Team1", fields: [team1], references: [id])
+  Team2     Team          @relation("Team2", fields: [team2], references: [id])
+}
+
+model RoundPrediction {
+  id          Int     @id @default(autoincrement())
+  team        Int
+  round       Int
+  userGroupId Int     @map("user_group_id")
+  result      Boolean @default(false)
+
+  Team      Team          @relation(fields: [team], references: [id])
+  UserGroup UsersOnGroups @relation(fields: [userGroupId], references: [id])
+}
+
+model Reward {
+  id      Int    @id @default(autoincrement())
+  userId  String @map("user_id")
+  groupId String @map("group_id")
+  reward  Float
+
+  User  User  @relation(fields: [userId], references: [id])
+  Group Group @relation(fields: [groupId], references: [id])
+}
