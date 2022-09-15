@@ -11,7 +11,7 @@ import { useMutation } from 'react-query';
 import { getPredictions, savePredictions } from '~/utils/api/prediction';
 import { getTeams } from '~/utils/api/team';
 import { DashboardLayout } from '~/components/dashboard-layout';
-import { COUNTRIES, ROUNDS } from '~/utils/constant';
+import { COUNTRIES, ROUNDS, SCHEDULE } from '~/utils/constant';
 
 const getCountryName = (code) => {
 	const country = COUNTRIES.find(item => item.code === code);
@@ -39,13 +39,15 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 	});
 
 	const GroupStep = ({ nextStep }) => {
-		const groups = teams.reduce( (acc, team) => {
-			if(!acc[team.group - 1]) {
-				acc[team.group - 1] = [];
-			}
-			acc[team.group - 1].push(team);
-			return acc;
-		}, [] );
+		const getTeamID = (code) => {
+			const team = teams.find(team => code === team.name );
+			return team && team.id;
+		}
+
+		const getTeamName = (code) => {
+			const country = COUNTRIES.find(country => country.code === code);
+			return country && country.label;
+		}
 
 		return (
 			<>
@@ -66,14 +68,14 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					justifyContent={"center"}
 				>
 					{
-						groups.map((group, index) => (
+						SCHEDULE.map((group, index) => (
 							<Grid
 								item
 								sm={6}
 								lg={4}
 								key={'group-' + index }
 							>
-								<Card>
+								<Card sx={{ height: '100%' }}>
 									<Table size="small">
 										<TableHead>
 											<TableRow>
@@ -88,41 +90,67 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 											</TableRow>
 										</TableHead>
 										<TableBody color="primary">
-											{ group.map((team1) => (
-												<TableRow key={"team-" + team1.name}>
-													<TableCell variant="footer">
-														<img
+											{ group.map(({team1, team2}) => (
+												<TableRow key={team1 + '-' + team2}>
+													<TableCell variant="footer" align="center">
+														{/* <img
 															loading="lazy"
 															width="20"
-															src={`https://flagcdn.com/w20/${team1.name.toLowerCase()}.png`}
-															srcSet={`https://flagcdn.com/w40/${team1.name.toLowerCase()}.png 2x`}
-															alt=""
-														/>
+															src={`https://flagcdn.com/w20/${team1.toLowerCase()}.png`}
+															srcSet={`https://flagcdn.com/w40/${team1.toLowerCase()}.png 2x`}
+															alt="team1"
+														/> */}
+														{ getTeamName(team1) }
 													</TableCell>
-													{ group.map((team2) => (
-														<TableCell key={"team-" + team2.name}>
-															{
-																team1.name !== team2.name &&												
-																<TextField
-																	select
-																	name={ "group[" + team1.id + '][' + team2.id + ']' }
-																	variant="standard"
-																	value={ formik.values.group && formik.values.group[team1.id] && formik.values.group[team1.id][team2.id] }
-																	onBlur={ formik.handleBlur }
-																	onChange={ formik.handleChange }
+													<TableCell>										
+														<TextField
+															select
+															name={ "group[" + getTeamID( team1 ) + '][' + getTeamID( team2 ) + ']' }
+															variant="standard"
+															value={ formik.values.group && formik.values.group[getTeamID( team1 )] && formik.values.group[getTeamID( team1 )][getTeamID( team2 )] }
+															onBlur={ formik.handleBlur }
+															onChange={ formik.handleChange }
+														>
+															{ [0,1,2,3,4,5,6,7,8,9,10].map(score => (
+																<MenuItem
+																	key={'score-' + score }
+																	value={score}
 																>
-																	{ [0,1,2,3,4,5,6,7,8,9,10].map(score => (
-																		<MenuItem
-																			key={'score-' + score }
-																			value={score}
-																		>
-																			{score}
-																		</MenuItem>
-																	)) }
-																</TextField>
-															}
-														</TableCell>
-													))}
+																	{score}
+																</MenuItem>
+															)) }
+														</TextField>
+													</TableCell>
+													<TableCell>:</TableCell>
+													<TableCell>						
+														<TextField
+															select
+															name={ "group[" + getTeamID( team2 ) + '][' + getTeamID( team1 ) + ']' }
+															variant="standard"
+															value={ formik.values.group && formik.values.group[getTeamID( team2 )] && formik.values.group[getTeamID( team2 )][getTeamID( team1 )] }
+															onBlur={ formik.handleBlur }
+															onChange={ formik.handleChange }
+														>
+															{ [0,1,2,3,4,5,6,7,8,9,10].map(score => (
+																<MenuItem
+																	key={'score-' + score }
+																	value={score}
+																>
+																	{score}
+																</MenuItem>
+															)) }
+														</TextField>
+													</TableCell>
+													<TableCell variant="footer" align="center">
+														{/* <img
+															loading="lazy"
+															width="20"
+															src={`https://flagcdn.com/w20/${team2.toLowerCase()}.png`}
+															srcSet={`https://flagcdn.com/w40/${team2.toLowerCase()}.png 2x`}
+															alt="team2"
+														/> */}
+														{ getTeamName(team2) }
+													</TableCell>
 												</TableRow>
 											)) }
 										</TableBody>

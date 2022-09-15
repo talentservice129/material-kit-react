@@ -73,11 +73,11 @@ const GroupSingle  = () => {
 		)
 	}
 
-	if( !group.data ) {
+	if( !(group && group.data) ) {
 		router.push('/404');
 	}
 
-	if ( group.data.password && (!groupData || !groupData.data) ) {
+	if ( group.data.password && ( session.user.role !== 'ADMIN' ) && (!groupData || !groupData.data) ) {
 		return (
 			<>
 				<Head>
@@ -240,9 +240,11 @@ const GroupSingle  = () => {
 										<TableCell>
 											Name
 										</TableCell>
+										{ session.user.role === 'ADMIN' &&
 										<TableCell>
 											Email
 										</TableCell>
+										}
 										<TableCell>
 											Score
 										</TableCell>
@@ -275,9 +277,11 @@ const GroupSingle  = () => {
 										</Typography>
 										</Box>
 									</TableCell>
+									{ session.user.role === 'ADMIN' &&
 									<TableCell>
 										{record.User.email}
 									</TableCell>
+									}
 									<TableCell>
 										{ record.score }
 									</TableCell>

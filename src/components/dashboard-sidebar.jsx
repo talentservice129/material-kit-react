@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Button, Divider, Drawer, Typography, useMediaQuery, Skeleton } from '@mui/material';
+import { styled, alpha } from '@mui/material/styles';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useQuery } from 'react-query';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
 
 import { ChartBar as ChartBarIcon } from '../icons/chart-bar';
 import { Cog as CogIcon } from '../icons/cog';
@@ -21,6 +24,41 @@ import { NavItem } from './nav-item';
 import { getGroups } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+	backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: theme.spacing(2),
+  marginRight: theme.spacing(2),
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+	padding: theme.spacing(1, 1, 1, 0),
+	// vertical padding + font size from searchIcon
+	paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+	transition: theme.transitions.create('width'),
+	width: '100%',
+	[theme.breakpoints.up('md')]: {
+	  width: '20ch',
+	},
+  },
+}));
+
 export const DashboardSidebar = (props) => {
 	const { open, onClose } = props;
 	const { session } = useAuth();
@@ -29,6 +67,7 @@ export const DashboardSidebar = (props) => {
 		defaultMatches: true,
 		noSsr: false
 	});
+	const [search, setSearch] = useState('');
 	const { isLoading, data } = useQuery('groups', getGroups);
 
 	useEffect(
@@ -116,6 +155,20 @@ export const DashboardSidebar = (props) => {
 					}}
 				/>
 				<Box sx={{ flexGrow: 1 }}>
+					<Search sx={{ mb: 3 }}>
+						<SearchIconWrapper>
+						<SearchIcon />
+						</SearchIconWrapper>
+						<StyledInputBase
+							placeholder="Search…"
+							inputProps={{
+								'aria-label': 'search',
+								value: search,
+								onChange: (e) => { setSearch(e.target.value) }
+							}}
+						/>
+					</Search>
+
 					{ !(session && session.user.role === 'ADMIN') &&
 						<NavItem
 							href="/groups/new"
@@ -151,7 +204,7 @@ export const DashboardSidebar = (props) => {
 							title="Competition Results"
 						/>
 					}
-					{data && data.data.map((item) => (
+					{data && data.data.filter(item => (!search || item.title.match(new RegExp(search, 'i')) )).map((item) => (
 						<NavItem
 							key={item.title}
 							// icon={item.icon}
