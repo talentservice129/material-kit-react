@@ -430,7 +430,7 @@ export const ROUNDS = {
 	16: 'Round 16',
 	8: 'Quarter Final',
 	4: 'Semi Final',
-	1: 'Final',
+	1: 'Champion',
 }
 
 export const SCHEDULE = [

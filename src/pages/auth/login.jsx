@@ -167,27 +167,49 @@ const Login = () => {
 								Sign In Now
 							</Button>
 						</Box>
-						<Typography
-							color="textSecondary"
-							variant="body2"
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between'
+							}}
 						>
-							Don&apos;t have an account?
-							{' '}
+							<Typography
+								color="textSecondary"
+								variant="body2"
+							>
+								Don&apos;t have an account?
+								{' '}
+								<NextLink
+									href="/auth/register"
+								>
+									<Link
+										to="/register"
+										variant="subtitle2"
+										underline="hover"
+										sx={{
+											cursor: 'pointer'
+										}}
+									>
+										Sign Up
+									</Link>
+								</NextLink>
+							</Typography>
 							<NextLink
-								href="/auth/register"
+								href="/auth/forgot-password"
 							>
 								<Link
-									to="/register"
+									to="/fogot-password"
 									variant="subtitle2"
 									underline="hover"
 									sx={{
 										cursor: 'pointer'
 									}}
 								>
-									Sign Up
+									Forgot Password?
 								</Link>
 							</NextLink>
-						</Typography>
+						</Box>
 					</form>
 				</Container>
 			</Box>

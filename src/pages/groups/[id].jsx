@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import { loginToGroup, getGroup } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 import { DashboardLayout } from '~/components/dashboard-layout';
+import { COUNTRIES } from '~/utils/constant';
 
 const GroupSingle  = () => {
 	const router = useRouter();
@@ -173,6 +174,10 @@ const GroupSingle  = () => {
 	  setPage(newPage);
 	};
 
+	const getCountry = (code) => {
+		return COUNTRIES.find(country => country.code === code);
+	}
+
 	return (
 		<>
 			<Head>
@@ -246,6 +251,9 @@ const GroupSingle  = () => {
 										</TableCell>
 										}
 										<TableCell>
+											Country
+										</TableCell>
+										<TableCell>
 											Score
 										</TableCell>
 									</TableRow>
@@ -282,6 +290,18 @@ const GroupSingle  = () => {
 										{record.User.email}
 									</TableCell>
 									}
+									<TableCell>
+										<Box sx={{ '& > img': { mr: 2, flexShrink: 0 } }}>
+											<img
+												loading="lazy"
+												width="20"
+												src={`https://flagcdn.com/w20/${record.User.country.toLowerCase()}.png`}
+												srcSet={`https://flagcdn.com/w40/${record.User.country.toLowerCase()}.png 2x`}
+												alt=""
+											/>
+											{getCountry( record.User.country ).label}
+										</Box>
+									</TableCell>
 									<TableCell>
 										{ record.score }
 									</TableCell>
