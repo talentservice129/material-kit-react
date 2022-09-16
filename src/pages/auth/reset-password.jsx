@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { useMutation } from 'react-query'
 import { useFormik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import { getSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -19,7 +19,7 @@ const ResetPassword = () => {
 		},
 		onError: (err) => {
 			formik.setErrors({
-				email: 'Unregistered email address'
+				token: 'Invalid Token'
 			});
 			formik.setSubmitting(false);
 		}
@@ -98,6 +98,11 @@ const ResetPassword = () => {
 
 						:
 						<>
+							{ formik.errors.token &&
+							<Alert variant="filled" severity="error" sx={{ mb: 2 }}>
+								{formik.errors.token}
+							</Alert>
+							}
 							<TextField
 								error={Boolean(formik.touched.password && formik.errors.password)}
 								fullWidth
