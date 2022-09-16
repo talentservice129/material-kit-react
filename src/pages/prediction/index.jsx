@@ -205,7 +205,14 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 									sx={{ mb: 3 }}
 									multiple
 									disableCloseOnSelect={true}
-									options={teams}
+									options={teams.sort((a,b) => {
+										let country1 = getCountryName(a.name),
+											ccountry2 = getCountryName(b.name);
+
+										if(country1 < ccountry2) { return -1;}
+										if(country1 > ccountry2) { return 1;}
+										return 0;
+									})}
 									getOptionLabel={(option) => getCountryName(option.name)}
 									onChange={ (e, value) => { formik.setFieldValue(`round[${round}]`, value.length <= round ? value : formik.values.round[round]) } }
 									defaultValue={ formik.values.round && formik.values.round[round] }
