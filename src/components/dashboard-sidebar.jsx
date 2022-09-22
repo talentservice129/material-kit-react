@@ -23,6 +23,12 @@ import { NavItem } from './nav-item';
 
 import { getGroups } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
+import { COUNTRIES } from '~/utils/constant';
+
+const getCountryName = (code) => {
+	const country = COUNTRIES.find(item => item.code.toLowerCase() === code.toLowerCase());
+	return country && country.label;
+}
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -68,7 +74,31 @@ export const DashboardSidebar = (props) => {
 		noSsr: false
 	});
 	const [search, setSearch] = useState('');
-	const { isLoading, data } = useQuery('groups', getGroups);
+	const { isLoading, data: fetchData } = useQuery('groups', getGroups);
+
+	let data = fetchData && [...fetchData.data];
+	data && data.sort((a,b) => {
+		if ( a.title === 'General' ) {
+			return -1;
+		}
+		if ( b.title === 'General' ) {
+			return 1;
+		}
+		console.log( session.user.country );
+		if ( a.title === 'General for ' + getCountryName( session.user.country ) ) {
+			return -1;
+		}
+		if ( b.title === 'General for ' + getCountryName( session.user.country ) ) {
+			return 1;
+		}
+		if ( a.title.startsWith('General for ') && !b.title.startsWith('General for ') ) {
+			return -1;
+		}
+		if ( !a.title.startsWith('General for ') && b.title.startsWith('General for ') ) {
+			return 1;
+		}
+		return a.title < b.title ? -1 : 1;
+	})
 
 	useEffect(
 		() => {
@@ -200,11 +230,11 @@ export const DashboardSidebar = (props) => {
 					} */}
 					{ (data && session && session.user.role === 'ADMIN') &&
 						<NavItem
-							href={"/prediction?group_id=" + data.data[0].id}
+							href={"/prediction?group_id=" + data[0].id}
 							title="Competition Results"
 						/>
 					}
-					{data && data.data.filter(item => (!search || item.title.match(new RegExp(search, 'i')) )).map((item) => (
+					{data && data.filter(item => (!search || item.title.match(new RegExp(search, 'i')) )).map((item) => (
 						<NavItem
 							key={item.title}
 							// icon={item.icon}

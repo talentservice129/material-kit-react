@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { loginToGroup, getGroup, payGroup } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 import { DashboardLayout } from '~/components/dashboard-layout';
-import { COUNTRIES } from '~/utils/constant';
+import { COUNTRIES, PAYMENT_LINKS } from '~/utils/constant';
 
 const GroupSingle  = () => {
 	const router = useRouter();
@@ -57,7 +57,7 @@ const GroupSingle  = () => {
 	const {mutate: payGroupMutation} = useMutation( () => payGroup( router.query.id ), {
 		onSuccess: ( {data} ) => {
 			if (data) {
-				window.open( `https://buy.stripe.com/test_fZebJoefZbQJaIgbII?prefilled_email=${ session.user.email }&client_reference_id=${data}`, "_self" );
+				window.open( `${ PAYMENT_LINKS[group.data.fee] }?prefilled_email=${ session.user.email }&client_reference_id=${data}`, "_self" );
 			}
 		}
 	});

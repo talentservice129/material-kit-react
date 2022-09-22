@@ -643,3 +643,12 @@ export const SCHEDULE = [
 		}
 	]
 ]
+
+export const PAYMENT_LINKS = {
+	5: 'https://buy.stripe.com/00gaHudqI7Up7Pa9BD',
+	10: 'https://buy.stripe.com/7sI7viaeweiNfhC9BE',
+	20: 'https://buy.stripe.com/5kA3f29asb6BglGbJN',
+	50: 'https://buy.stripe.com/14kaHueuM0rX1qM5lq',
+	100: 'https://buy.stripe.com/3cs3f2dqI2A51qMcNT',
+	500: 'https://buy.stripe.com/00gaHu1I0fmR0mIdRY'
+};
