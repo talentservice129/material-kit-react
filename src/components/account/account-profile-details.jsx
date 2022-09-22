@@ -78,7 +78,6 @@ export const AccountProfileDetails = ({currentUser, ...props}) => {
 					'Country is required'),
 		}),
 		onSubmit: () => {
-			console.log(formik.values);
 			updateUserMutation({
 				...formik.values,
 				name: currentUser.name

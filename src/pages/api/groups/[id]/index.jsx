@@ -93,9 +93,24 @@ export default async function handler(req, res) {
 			}
 		});
 
+		let payment = null;
+
+		if ( group.fee > 0 ) {
+			payment = await prisma.entranceFeeRecord.findFirst({
+				where: {
+					userId: req.query.user,
+					groupId: req.query.id,
+					session: {
+						not: null
+					}
+				}
+			});
+		}
+
 		group = {
 			...group,
 			results: !!results,
+			payment: payment,
 			UsersOnGroups: group.UsersOnGroups.map((item) => {
 				return {
 					id: item.id,

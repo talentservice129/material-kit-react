@@ -2,13 +2,14 @@ import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { getSession } from 'next-auth/react';
 import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 
-import { loginToGroup, getGroup } from '~/utils/api/group';
+import { loginToGroup, getGroup, payGroup } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 import { DashboardLayout } from '~/components/dashboard-layout';
 import { COUNTRIES } from '~/utils/constant';
@@ -53,7 +54,13 @@ const GroupSingle  = () => {
 			}
 		}
 	);
-	const [login, openLogin] = useState(true);
+	const {mutate: payGroupMutation} = useMutation( () => payGroup( router.query.id ), {
+		onSuccess: ( {data} ) => {
+			if (data) {
+				window.open( `https://buy.stripe.com/test_fZebJoefZbQJaIgbII?prefilled_email=${ session.user.email }&client_reference_id=${data}`, "_self" );
+			}
+		}
+	});
 	const [ payFee, openPayFee ] = useState(false);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
@@ -78,7 +85,7 @@ const GroupSingle  = () => {
 		router.push('/404');
 	}
 
-	if ( group.data.password && ( session.user.role !== 'ADMIN' ) && (!groupData || !groupData.data) ) {
+	if ( group.data.password && ( session && session.user.role !== 'ADMIN' ) && (!groupData || !groupData.data) ) {
 		return (
 			<>
 				<Head>
@@ -149,21 +156,20 @@ const GroupSingle  = () => {
 		}
 	};
 
-	const groupPredicition = () => {
-		if ( !group.data.UsersOnGroups.find( (item) => item.User.email === session.user.email ) ) {
-			if ( group.data.fee > 0 ) {
+	const groupPrediction = () => {
+		if ( group.data.fee > 0 ) {
+			if ( !group.data.payment ) {
 				openPayFee(true);
 			} else {
-				router.push(url);
+				if ( group.data.payment.completed ) {
+					router.push(url);
+				} else {
+					toast("Payment is pending now");
+				}
 			}
 		} else {
 			router.push(url);
 		}
-	}
-
-	const payEntranceFee = () => {
-		openPayFee(false);
-		router.push(url);
 	}
 
 	const handleLimitChange = (event) => {
@@ -221,7 +227,8 @@ const GroupSingle  = () => {
 								<Button
 									color="primary"
 									variant="contained"
-									onClick={ groupPredicition }
+									onClick={ groupPrediction }
+									disabled={group.data.finished}
 								>
 									Prediction
 								</Button>
@@ -345,8 +352,9 @@ const GroupSingle  = () => {
 				</DialogContent>
 				<DialogActions>
 					<Button
+						// href="https://buy.stripe.com/test_fZebJoefZbQJaIgbII?client_reference_id=www123"
 						disabled={ formik.isSubmitting }
-						onClick={ payEntranceFee }
+						onClick={ payGroupMutation }
 					>
 						Pay
 					</Button>

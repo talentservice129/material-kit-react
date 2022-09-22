@@ -86,19 +86,27 @@ export default async function handler(req, res) {
 						include: {
 							Team: true
 						}
-					}	
+					}
 				}
 			});
+
+			const finished = await prisma.group.findFirst({
+				where: {
+					finished: true
+				}
+			})
 
 			if ( predictions ) {
 				return res.send({
 					group: convertGroup( predictions.GroupPrediction ),
-					round: convertRound( predictions.RoundPrediction )
+					round: convertRound( predictions.RoundPrediction ),
+					finished: !!finished
 				});
 			}
 			res.send({
 				group: {},
-				round: {}
+				round: {},
+				finished: !!finished
 			});
 		} else if ( req.method === 'POST' ) {
 			let predictions  = await prisma.usersOnGroups.findFirst({

@@ -12,8 +12,14 @@ export const getGroups = async () => {
 	});
 }
 
-export const getGroup = (id) => {
-	return http.get('/api/groups/' + id);
+export const getGroup = async (id) => {
+	const session = await getSession();
+
+	return http.get('/api/groups/' + id, {
+		params: {
+			user: session && session.user.id
+		}
+	});
 }
 
 export const loginToGroup = (id, password) => {
@@ -29,4 +35,26 @@ export const addGroup = async (data) => {
 		...data,
 		user: session && session.user.id
 	});
+}
+
+export const getPayInfo = async ( id ) => {
+	const session = await getSession();
+
+	return http.get( '/api/groups/' + id + '/pay', {
+		params: {
+			user: session.user.id
+		}
+	} );
+}
+
+export const payGroup = async ( id ) => {
+	const session = await getSession();
+
+	return http.post( '/api/groups/' + id + '/pay', {
+		user: session.user.id
+	} );
+}
+
+export const getPayIdBySession = (session) => {
+	return http.get('/api/session/' + session);
 }

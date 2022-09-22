@@ -3,14 +3,16 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { getSession } from 'next-auth/react';
+import NextLink from 'next/link';
 import { Autocomplete, Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import StepWizard from 'react-step-wizard';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
 
-import { getPredictions, savePredictions } from '~/utils/api/prediction';
-import { getTeams } from '~/utils/api/team';
 import { DashboardLayout } from '~/components/dashboard-layout';
+import { getPredictions, savePredictions, endPredictions, startPredictions } from '~/utils/api/prediction';
+import { getTeams } from '~/utils/api/team';
 import { COUNTRIES, ROUNDS, SCHEDULE } from '~/utils/constant';
 
 const getCountryName = (code) => {
@@ -93,16 +95,15 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 											{ group.map(({team1, team2}) => (
 												<TableRow key={team1 + '-' + team2}>
 													<TableCell variant="footer" align="center">
-														{/* <img
+														<img
 															loading="lazy"
 															width="20"
 															src={`https://flagcdn.com/w20/${team1.toLowerCase()}.png`}
 															srcSet={`https://flagcdn.com/w40/${team1.toLowerCase()}.png 2x`}
 															alt="team1"
-														/> */}
-														{ getTeamName(team1) }
+														/>
 													</TableCell>
-													<TableCell>										
+													<TableCell align="center">										
 														<TextField
 															select
 															name={ "group[" + getTeamID( team1 ) + '][' + getTeamID( team2 ) + ']' }
@@ -121,8 +122,8 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 															)) }
 														</TextField>
 													</TableCell>
-													<TableCell>:</TableCell>
-													<TableCell>						
+													<TableCell align="center">:</TableCell>
+													<TableCell align="center">						
 														<TextField
 															select
 															name={ "group[" + getTeamID( team2 ) + '][' + getTeamID( team1 ) + ']' }
@@ -141,15 +142,17 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 															)) }
 														</TextField>
 													</TableCell>
-													<TableCell variant="footer" align="center">
-														{/* <img
+													<TableCell
+														variant="footer"
+														align="center"
+													>
+														<img
 															loading="lazy"
 															width="20"
 															src={`https://flagcdn.com/w20/${team2.toLowerCase()}.png`}
 															srcSet={`https://flagcdn.com/w40/${team2.toLowerCase()}.png 2x`}
 															alt="team2"
-														/> */}
-														{ getTeamName(team2) }
+														/>
 													</TableCell>
 												</TableRow>
 											)) }
@@ -282,7 +285,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 	);
 }
 
-const Prediction  = () => {
+const Prediction  = ({ session }) => {
 	const router = useRouter();
 	const { isLoading: isTeamsLoading, data: teams } = useQuery('teams', getTeams);
 	const { isLoading, data: predictions } = useQuery(
@@ -292,6 +295,16 @@ const Prediction  = () => {
 			enabled: !!router.query.group_id,
 		}
 	);
+	const { mutate: startPredictionsMutation, isLoading: starting } = useMutation( startPredictions, {
+		onSuccess: () => {
+			toast.success('Prediction started');
+		}
+	} );
+	const { mutate: endPredictionsMutation, isLoading: ending } = useMutation( endPredictions, {
+		onSuccess: () => {
+			toast.success('Prediction finished');
+		}
+	} );
 
 	if ( isLoading || isTeamsLoading ) {
 		return (
@@ -324,14 +337,39 @@ const Prediction  = () => {
 				}}
 			>
 				<Container maxWidth="lg">
-					<Typography
-						variant="h4"
+					<Box
 						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
 							mb: 3
 						}}
 					>
-						Predictions
-					</Typography>
+						<Typography variant="h4">
+							Predictions
+						</Typography>
+						{ session.user.role === 'ADMIN' && (
+							!predictions.data.finished ?
+								<Button
+									color="primary"
+									variant="contained"
+									onClick={endPredictionsMutation}
+									disabled={ ending }
+								>
+									End Prediction
+								</Button>
+								:
+								<Button
+									color="primary"
+									variant="contained"
+									onClick={startPredictionsMutation}
+									disabled={ starting }
+								>
+									Start Prediction
+								</Button>
+							)
+						}
+					</Box>
 					<PredictionsWizard
 						initialValues={predictions.data}
 						teams={ teams.data }

@@ -54,9 +54,10 @@ model User {
   password      String
   country       String
 
-  UsersOnGroups UsersOnGroups[]
-  Group         Group[]
-  Reward        Reward[]
+  UsersOnGroups     UsersOnGroups[]
+  Group             Group[]
+  Reward            Reward[]
+  EntranceFeeRecord EntranceFeeRecord[]
 
   @@map("users")
 }
@@ -79,10 +80,12 @@ model Group {
   password    String?
   origin      String  @default("")
   owner       String?
+  finished    Boolean @default(false)
 
-  Owner         User?           @relation(fields: [owner], references: [id])
-  UsersOnGroups UsersOnGroups[]
-  Reward        Reward[]
+  Owner             User?               @relation(fields: [owner], references: [id])
+  UsersOnGroups     UsersOnGroups[]
+  Reward            Reward[]
+  EntranceFeeRecord EntranceFeeRecord[]
 }
 
 model UsersOnGroups {
@@ -119,6 +122,17 @@ model RoundPrediction {
 
   Team      Team          @relation(fields: [team], references: [id])
   UserGroup UsersOnGroups @relation(fields: [userGroupId], references: [id])
+}
+
+model EntranceFeeRecord {
+  id        String  @id @default(cuid())
+  userId    String  @map("user_id")
+  groupId   String? @map("group_id")
+  completed Boolean @default(false)
+  session   String?
+
+  User  User   @relation(fields: [userId], references: [id])
+  Group Group? @relation(fields: [groupId], references: [id])
 }
 
 model Reward {

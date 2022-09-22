@@ -23,3 +23,16 @@ export const savePredictions = async ( { groupId, ...data } ) => {
 		}
 	});
 }
+
+export const endPredictions = async () => {
+	const session = await getSession();
+
+	return http.post('/api/predictions/stop', {
+		user: session && session.user.id
+	});
+}
+
+export const startPredictions = async () => {
+	const session = await getSession();
+	return http.post('/api/predictions/start');
+}
