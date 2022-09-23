@@ -26,7 +26,7 @@ import { getSession } from 'next-auth/react';
 import { DashboardLayout } from '~/components/dashboard-layout';
 import { addGroup } from '~/utils/api/group';
 
-const fees = [0,5,10,20,50,100,500];
+const fees = [0,10,20,50,100,500];
 
 const NewGroup = () => {
 	const router = useRouter();

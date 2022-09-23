@@ -645,7 +645,7 @@ export const SCHEDULE = [
 ]
 
 export const PAYMENT_LINKS = {
-	5: 'https://buy.stripe.com/00gaHudqI7Up7Pa9BD',
+	// 5: 'https://buy.stripe.com/00gaHudqI7Up7Pa9BD',
 	10: 'https://buy.stripe.com/7sI7viaeweiNfhC9BE',
 	20: 'https://buy.stripe.com/5kA3f29asb6BglGbJN',
 	50: 'https://buy.stripe.com/14kaHueuM0rX1qM5lq',
