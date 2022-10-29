@@ -21,6 +21,7 @@ import { useMutation } from 'react-query';
 
 import { COUNTRIES } from '~/utils/constant';
 import { registerUser } from '~/utils/api/auth';
+import { Logo } from '~/components/logo';
 
 const Register = () => {
 	const router = useRouter();
@@ -108,17 +109,41 @@ const Register = () => {
 				}}
 			>
 				<Container maxWidth="sm">
-					<NextLink
-						href="/"
-						passHref
+					<Box
+						mt={2}
+						sx={{
+							display: 'flex',
+							justifyContent: 'space-between'
+						}}
 					>
-						<Button
-						component="a"
-						startIcon={<ArrowBackIcon fontSize="small" />}
+						<NextLink
+							href="http://www.ppenca.com"
+							passHref
 						>
-						Dashboard
-						</Button>
-					</NextLink>
+							<a
+								style={{ textDecoration: 'none' }}
+								target="_blanck"
+							>
+								<Logo
+									sx={{
+										height: 42,
+										width: 42
+									}}
+								/>
+							</a>
+						</NextLink>
+						<NextLink
+							href="/"
+							passHref
+						>
+							<Button
+							component="a"
+							startIcon={<ArrowBackIcon fontSize="small" />}
+							>
+							Dashboard
+							</Button>
+						</NextLink>
+					</Box>
 					<form onSubmit={formik.handleSubmit}>
 						<Box sx={{ my: 3 }}>
 							<Typography

@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import { getSession } from 'next-auth/react';
 
+import {Logo} from '~/components/logo';
 import { useAuth } from '~/hooks/useAuth';
 
 const Login = () => {
@@ -63,6 +64,24 @@ const Login = () => {
 			>
 				<Container maxWidth="sm">
 					<form onSubmit={formik.handleSubmit}>
+						<Box>
+							<NextLink
+								href="http://www.ppenca.com"
+								passHref
+							>
+								<a
+									style={{ textDecoration: 'none' }}
+									target="_blanck"
+								>
+									<Logo
+										sx={{
+											height: 42,
+											width: 42
+										}}
+									/>
+								</a>
+							</NextLink>
+						</Box>
 						<Box sx={{ my: 3 }}>
 							<Typography
 								color="textPrimary"

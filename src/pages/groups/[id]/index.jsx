@@ -4,7 +4,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from 'react-query';
 import { getSession } from 'next-auth/react';
-import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardContent, CardHeader, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Link, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
@@ -36,7 +36,7 @@ const GroupSingle  = () => {
 		}),
 		onSubmit: () => {}
 	});
-	const { data: groupData } = useQuery(
+	const { data: groupData, error } = useQuery(
 		['group-password', router.query.id],
 		() => loginToGroup( router.query.id, formik.values.password ),
 		{
@@ -126,10 +126,16 @@ const GroupSingle  = () => {
 							<Box
 								sx={{
 									display: 'flex',
-									justifyContent: 'flex-end',
+									alignItems: 'center',
+									justifyContent: 'space-between',
 									p: 2
 								}}
 							>
+								<Link
+									href={"mailTo:" + group.data.Owner.email }
+									underline="none"
+									variant="sm"
+								>Forgot password? Contact to Admin</Link>
 								<Button
 									color="primary"
 									variant="contained"
@@ -150,9 +156,9 @@ const GroupSingle  = () => {
 	const results = group.data && group.data.results;
 
 	const url = {
-		pathname: '/prediction',
+		pathname: router.pathname + '/prediction',
 		query: {
-			group_id: group.data.id
+			id: group.data.id
 		}
 	};
 

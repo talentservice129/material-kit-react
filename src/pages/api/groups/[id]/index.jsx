@@ -64,6 +64,11 @@ export default async function handler(req, res) {
 				id: req.query.id
 			},
 			include: {
+				Owner: {
+					select: {
+						email: true
+					}
+				},
 				UsersOnGroups: {
 					where: {
 						User: {

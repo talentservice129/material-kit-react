@@ -84,7 +84,6 @@ export const DashboardSidebar = (props) => {
 		if ( b.title === 'General' ) {
 			return 1;
 		}
-		console.log( session.user.country );
 		if ( a.title === 'General for ' + getCountryName( session.user.country ) ) {
 			return -1;
 		}
@@ -230,7 +229,7 @@ export const DashboardSidebar = (props) => {
 					} */}
 					{ (data && session && session.user.role === 'ADMIN') &&
 						<NavItem
-							href={"/prediction?group_id=" + data[0].id}
+							href={"/groups/" + data[0].id + "/prediction" }
 							title="Competition Results"
 						/>
 					}
