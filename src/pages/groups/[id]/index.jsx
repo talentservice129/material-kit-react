@@ -9,7 +9,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 
-import { loginToGroup, getGroup, payGroup } from '~/utils/api/group';
+import { loginToGroup, getGroup, payGroup, resetGroupPassword } from '~/utils/api/group';
 import { useAuth } from '~/hooks/useAuth';
 import { DashboardLayout } from '~/components/dashboard-layout';
 import { COUNTRIES, PAYMENT_LINKS } from '~/utils/constant';
@@ -32,6 +32,7 @@ const GroupSingle  = () => {
 			password: Yup
 				.string()
 				.max(255)
+				.oneOf([Yup.ref("password")], "Both password need to be the sames")
 				.required('Please enter password')
 		}),
 		onSubmit: () => {}
@@ -64,6 +65,43 @@ const GroupSingle  = () => {
 	const [ payFee, openPayFee ] = useState(false);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
+	const { mutate: resetPasswordMutation } = useMutation(resetGroupPassword, {
+		onSuccess: () => {
+			resetFormik.setSubmitting(false);
+			openResetPassword(false);
+			toast.success('Password changed');
+		},
+		onError: (err) => {
+			resetFormik.setErrors({
+				token: 'Invalid Token'
+			});
+			resetFormik.setSubmitting(false);
+		}
+	});
+	const [resetPassword, openResetPassword] = useState(false);
+	const resetFormik = useFormik({
+		initialValues: {
+			password: '',
+			passwordConfirm: ''
+		},
+		validationSchema: Yup.object({
+			password: Yup
+				.string()
+				.max(255)
+				.required('Please enter password'),
+			passwordConfirm: Yup
+				.string()
+				.max(255)
+				.oneOf([Yup.ref("password")], "Both password need to be the sames")
+				.required('Please enter password')
+		}),
+		onSubmit: () => {
+			resetPasswordMutation({
+				id: router.query.id, 
+				password: resetFormik.values.password
+			});
+		}
+	})
 
 	if ( isLoading ) {
 		return (
@@ -131,11 +169,23 @@ const GroupSingle  = () => {
 									p: 2
 								}}
 							>
-								<Link
-									href={"mailTo:" + group.data.Owner.email }
-									underline="none"
-									variant="sm"
-								>Forgot password? Contact to Admin</Link>
+								{ session.user.email === group.data.Owner.email ?
+									<Link
+										component="button"
+										type="button"
+										underline="none"
+										variant="sm"
+										onClick={ () => openResetPassword(true) }
+									>
+										Reset password
+									</Link>
+								:
+									<Link
+										href={"mailTo:" + group.data.Owner.email }
+										underline="none"
+										variant="sm"
+									>Forgot password? Contact to Admin</Link>
+								}
 								<Button
 									color="primary"
 									variant="contained"
@@ -148,6 +198,65 @@ const GroupSingle  = () => {
 					</form>
 					</Container>
 				</Box>
+				<Dialog
+					open={resetPassword}
+					onClose={() => openResetPassword(false)}
+				>
+					<DialogTitle>Reset Group Password</DialogTitle>
+					<DialogContent>
+						<form
+							id="resetPassword"
+							onSubmit={resetFormik.handleSubmit}>
+							{ resetFormik.errors.token &&
+							<Alert
+								variant="filled"
+								severity="error"
+								sx={{ mb: 2 }}
+							>
+								{resetFormik.errors.token}
+							</Alert>
+							}
+							<TextField
+								error={Boolean(resetFormik.touched.password && resetFormik.errors.password)}
+								fullWidth
+								helperText={resetFormik.touched.password && resetFormik.errors.password}
+								label="Password"
+								margin="normal"
+								name="password"
+								onBlur={resetFormik.handleBlur}
+								onChange={resetFormik.handleChange}
+								type="password"
+								value={resetFormik.values.password}
+								variant="outlined"
+							/>
+							<TextField
+								error={Boolean(resetFormik.touched.passwordConfirm && resetFormik.errors.passwordConfirm)}
+								fullWidth
+								helperText={resetFormik.touched.passwordConfirm && resetFormik.errors.passwordConfirm}
+								label="Password Confirmation"
+								margin="normal"
+								name="passwordConfirm"
+								onBlur={resetFormik.handleBlur}
+								onChange={resetFormik.handleChange}
+								type="password"
+								value={resetFormik.values.passwordConfirm}
+								variant="outlined"
+							/>
+						</form>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							color="primary"
+							disabled={resetFormik.isSubmitting}
+							fullWidth
+							size="large"
+							variant="contained"
+							onClick={ resetFormik.submitForm }
+						>
+							Reset Password
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</>
 		)
 	}

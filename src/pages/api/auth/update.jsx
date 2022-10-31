@@ -19,17 +19,22 @@ export default async function handler(req, res) {
 			const check = await confirmPasswordHash(req.body.current_password, user.password);
 			
 			if (check) {
+				const data = {
+					firstName: req.body.firstName,
+					lastName: req.body.lastName,
+					email: req.body.email == user.email ? undefined : req.body.email,
+					country: req.body.country
+				}
+
+				if ( req.body.password ) {
+					data['password'] = bcrypt.hashSync(req.body.password, 0 );
+				}
+
 				await prisma.user.update({
 					where: {
 						id: user.id
 					},
-					data: {
-						firstName: req.body.firstName,
-						lastName: req.body.lastName,
-						email: req.body.email == user.email ? undefined : req.body.email,
-						password: bcrypt.hashSync(req.body.password, 0 ),
-						country: req.body.country,
-					}
+					data
 				});
 
 				const group = await prisma.group.findFirst({

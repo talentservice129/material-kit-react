@@ -58,3 +58,13 @@ export const payGroup = async ( id ) => {
 export const getPayIdBySession = (session) => {
 	return http.get('/api/session/' + session);
 }
+
+export const resetGroupPassword = async (data) => {
+	const session = await getSession();
+	console.log(data);
+
+	return http.post('/api/groups/' + data.id + '/reset-password', {
+		user: session.user.id,
+		password: data.password
+	});
+}

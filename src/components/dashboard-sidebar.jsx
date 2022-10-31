@@ -125,10 +125,13 @@ export const DashboardSidebar = (props) => {
 				<div>
 					<Box sx={{ p: 3 }}>
 						<NextLink
-							href="/"
+							href="https://www.ppenca.com"
 							passHref
 						>
-							<a style={{ textDecoration: 'none' }}>
+							<a
+								style={{ textDecoration: 'none' }}
+								target="_blank"
+							>
 								<Logo
 									sx={{
 										height: 42,

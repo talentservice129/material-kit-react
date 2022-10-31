@@ -62,16 +62,19 @@ export const AccountProfileDetails = ({currentUser, ...props}) => {
 				.string()
 				.max(255)
 				.required(
-					'Password is required'),
+					'Password is required')
+				,
 			password: Yup
 				.string()
 				.max(255)
-				.required('Password is required'),
+				// .required('Password is required')
+				,
 			passwordConfirm: Yup
 				.string()
 				.max(255)
 				.oneOf([Yup.ref("password")], "Both password need to be the sames")
-				.required('Enter password again for confirmation'),
+				// .required('Enter password again for confirmation')
+				,
 			country: Yup
 				.string()
 				.required(
