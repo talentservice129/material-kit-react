@@ -99,7 +99,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 											{ group.map(({team1, team2}) => (
 												<TableRow key={team1 + '-' + team2}>
 													<TableCell variant="footer" align="center">
-														<Box sx={{ dsiplay: 'flex', alignItems: 'center' }}>
+														<Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
 															<img
 																loading="lazy"
 																width="20"
@@ -153,7 +153,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 														variant="footer"
 														align="center"
 													>
-														<Box sx={{ dsiplay: 'flex', alignItems: 'center' }}>
+														<Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
 														<span style={{ marginRight: '10px' }}>
 															{ team2.includes('GB-') ?  team2.replace('GB-', '') : getCountryISO3(team2) } 
 														</span>
@@ -200,6 +200,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 						color="primary"
 						variant="contained"
 						onClick={ nextStep }
+						disabled={ formik.isSubmitting }
 					>
 						Next
 					</Button>
