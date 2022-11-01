@@ -10,6 +10,8 @@ import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 
+const getCountryISO3 = require("country-iso-2-to-3");
+
 import { DashboardLayout } from '~/components/dashboard-layout';
 import { getPredictions, savePredictions, endPredictions, startPredictions } from '~/utils/api/prediction';
 import { getTeams } from '~/utils/api/team';
@@ -97,13 +99,16 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 											{ group.map(({team1, team2}) => (
 												<TableRow key={team1 + '-' + team2}>
 													<TableCell variant="footer" align="center">
-														<img
-															loading="lazy"
-															width="20"
-															src={`https://flagcdn.com/w20/${team1.toLowerCase()}.png`}
-															srcSet={`https://flagcdn.com/w40/${team1.toLowerCase()}.png 2x`}
-															alt="team1"
-														/>
+														<Box sx={{ dsiplay: 'flex', alignItems: 'center' }}>
+															<img
+																loading="lazy"
+																width="20"
+																src={`https://flagcdn.com/w20/${team1.toLowerCase()}.png`}
+																srcSet={`https://flagcdn.com/w40/${team1.toLowerCase()}.png 2x`}
+																alt="team1"
+															/>
+															<span style={{ marginLeft: '10px' }}> { team1.includes('GB-') ? team1.replace('GB-', '') : getCountryISO3(team1) }</span>
+														</Box>
 													</TableCell>
 													<TableCell align="center">										
 														<TextField
@@ -148,6 +153,10 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 														variant="footer"
 														align="center"
 													>
+														<Box sx={{ dsiplay: 'flex', alignItems: 'center' }}>
+														<span style={{ marginRight: '10px' }}>
+															{ team2.includes('GB-') ?  team2.replace('GB-', '') : getCountryISO3(team2) } 
+														</span>
 														<img
 															loading="lazy"
 															width="20"
@@ -155,6 +164,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 															srcSet={`https://flagcdn.com/w40/${team2.toLowerCase()}.png 2x`}
 															alt="team2"
 														/>
+														</Box>
 													</TableCell>
 												</TableRow>
 											)) }
@@ -177,6 +187,14 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 						onClick={ () => router.back() }
 					>
 						Back
+					</Button>
+					<Button
+						color="primary"
+						variant="contained"
+						type="submit"
+						disabled={ formik.isSubmitting }
+					>
+						Save
 					</Button>
 					<Button
 						color="primary"

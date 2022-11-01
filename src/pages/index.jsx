@@ -76,7 +76,7 @@ const Dashboard = () => (
 								5: Only the winner
 							</ListItem>
 							<ListItem>
-								2: How many goals scoreed by one of teams
+								2: How many goals scored by one of teams
 							</ListItem>
 						</List>
 						<Typography
