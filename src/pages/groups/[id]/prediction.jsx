@@ -188,14 +188,16 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					>
 						Back
 					</Button>
+					{ !initialValues.finished &&
 					<Button
 						color="primary"
 						variant="contained"
 						type="submit"
-						disabled={ formik.isSubmitting }
+						disabled={ formik.isSubmitting  }
 					>
 						Save
 					</Button>
+					}
 					<Button
 						color="primary"
 						variant="contained"
@@ -281,6 +283,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					>
 						To Group
 					</Button>
+					{ !initialValues.finished &&
 					<Button
 						color="primary"
 						variant="contained"
@@ -289,6 +292,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					>
 						Save
 					</Button>
+					}
 				</Box>
 			</>
 		)

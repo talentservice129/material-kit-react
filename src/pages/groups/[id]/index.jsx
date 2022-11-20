@@ -343,7 +343,6 @@ const GroupSingle  = () => {
 									color="primary"
 									variant="contained"
 									onClick={ groupPrediction }
-									disabled={group.data.finished}
 								>
 									Prediction
 								</Button>
