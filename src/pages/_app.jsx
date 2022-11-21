@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { getSession, SessionProvider, useSession } from 'next-auth/react';
 import { CacheProvider } from '@emotion/react';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import {LocalizationProvider} from '@mui/x-date-pickers';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
