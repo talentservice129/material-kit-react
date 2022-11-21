@@ -16,6 +16,7 @@ import { DashboardLayout } from '~/components/dashboard-layout';
 import { getPredictions, savePredictions, endPredictions, startPredictions } from '~/utils/api/prediction';
 import { getTeams } from '~/utils/api/team';
 import { COUNTRIES, ROUNDS, SCHEDULE } from '~/utils/constant';
+import { useAuth } from '~/hooks/useAuth';
 
 const getCountryName = (code) => {
 	const country = COUNTRIES.find(item => item.code === code);
@@ -24,6 +25,8 @@ const getCountryName = (code) => {
 
 const PredictionsWizard = ( {initialValues, teams} ) => {
 	const router = useRouter();
+	const { session } = useAuth();
+
 	const { mutate: savePredictionMutation } = useMutation( savePredictions, {
 		onSuccess: () => {
 			toast.success('Prediction saved');
@@ -188,7 +191,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					>
 						Back
 					</Button>
-					{ !initialValues.finished &&
+					{ (!initialValues.finished || (session && session.user.role === 'ADMIN')) &&
 					<Button
 						color="primary"
 						variant="contained"
@@ -283,7 +286,7 @@ const PredictionsWizard = ( {initialValues, teams} ) => {
 					>
 						To Group
 					</Button>
-					{ !initialValues.finished &&
+					{ (!initialValues.finished || (session && session.user.role === 'ADMIN')) &&
 					<Button
 						color="primary"
 						variant="contained"
